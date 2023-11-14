@@ -1,16 +1,17 @@
-const express = require("express");
+import express from "express";
+import "dotenv/config";
+
 const app = express();
-require("dotenv").config();
 
 const PORT = process.env.PORT || 8080;
 
-const homeRoutes = require("./routes/home-routes.js");
+// import homeRoutes from "./routes/home-routes.js";
 
-const userRoutes = require("./routes/user-routes");
+import userRoutes from "./routes/user-routes.js";
 
 app.use(express.json());
 
-app.use("/", homeRoutes);
+// app.use("/", homeRoutes);
 
 app.use("/users", userRoutes);
 
