@@ -1,7 +1,6 @@
 import knexinit from "knex";
 import knexfile from "../knexfile.js";
 const knex = knexinit(knexfile);
-console.log(knexfile);
 
 const index = async (_req, res) => {
   try {
@@ -108,23 +107,23 @@ const getUserIdImages = async (req, res) => {
 };
 
 const postUserIdImages = async (req, res) => {
-  const user_id = req.body.user_id;
-  const title = req.body.title;
-  const category = req.body.category;
+  // const user_id = req.body.user_id;
+  // const title = req.body.title;
+  // const category = req.body.category;
   const filename = req.body.filename;
+
   // const likes = req.body.likes;
 
-  if (!title && !category === 0) {
+  if (!filename === 0) {
     return res.status(400).json({ message: "image upload failed" });
   }
   try {
     const newImageId = await knex("images").insert([
       {
-        user_id: parseInt(user_id),
-        title: title,
-        category: category,
+        // user_id: parseInt(user_id),
+        // title: title,
+        // category: category,
         filename: filename,
-        // likes: parseInt(likes),
       },
     ]);
     const createdImage = await knex("images").where({ id: newImageId[0] });

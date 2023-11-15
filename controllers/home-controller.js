@@ -1,5 +1,5 @@
 import knexinit from "knex";
-import knexfile from "../knexfile";
+import knexfile from "../knexfile.js";
 const knex = knexinit(knexfile);
 
 const getAllImages = async (_req, res) => {
@@ -11,6 +11,4 @@ const getAllImages = async (_req, res) => {
   }
 };
 
-module.exports = {
-  getAllImages,
-};
+export default { getAllImages };

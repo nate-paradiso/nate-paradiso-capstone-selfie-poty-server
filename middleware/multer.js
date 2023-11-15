@@ -2,11 +2,11 @@ import multer from "multer";
 import path from "path";
 
 export const storage = multer.diskStorage({
-  destination: (req, file, db) => {
-    db(null, "public/images");
+  destination: (req, file, callBack) => {
+    callBack(null, "public/images");
   },
   filename: (req, file, db) => {
-    db(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname));
+    callBack(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname));
   },
 });
 

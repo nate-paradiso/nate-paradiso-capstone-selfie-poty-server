@@ -9,6 +9,7 @@ import {
   getUserIdImages,
   postUserIdImages,
 } from "../controllers/user-controller.js";
+
 import { uploadMulter } from "../middleware/multer.js";
 
 router.route("/").get(index).post(add);
