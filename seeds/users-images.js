@@ -1,8 +1,8 @@
 // import seed data files, arrays of objects
-const usersData = require("../seed-data/users");
-const imagesData = require("../seed-data/images");
+import usersData from "../seed-data/users.js";
+import imagesData from "../seed-data/images.js";
 
-exports.seed = async function (knex) {
+export const seed = async function (knex) {
   await knex("images").del();
   await knex("users").del();
   await knex("users").insert(usersData);

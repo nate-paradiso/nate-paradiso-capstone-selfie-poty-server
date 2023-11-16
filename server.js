@@ -4,7 +4,7 @@ import "dotenv/config";
 
 const app = express();
 app.use(cors({ origin: process.env.FRONTEND_URL }));
-
+app.use(express.static("./public"));
 app.use(express.json());
 
 import homeRoutes from "./routes/home-routes.js";

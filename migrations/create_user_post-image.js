@@ -2,7 +2,7 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.up = function (knex) {
+export const up = knex => {
   return knex.schema
     .createTable("users", table => {
       table.increments("id").primary();
@@ -15,7 +15,7 @@ exports.up = function (knex) {
     .createTable("images", table => {
       table.increments("image_id").primary();
       table.string("title").notNullable();
-      table.string("filename").notNullable();
+      table.string("image").notNullable();
       table.string("category").notNullable();
       table.integer("likes").notNullable().defaultTo(0);
       table
@@ -32,6 +32,6 @@ exports.up = function (knex) {
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.down = function (knex) {
+export const down = knex => {
   return knex.schema.dropTable("users").dropTable("images");
 };

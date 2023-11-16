@@ -1,4 +1,4 @@
-module.exports = [
+const users = [
   {
     id: 1,
     first_name: "Nate",
@@ -21,3 +21,4 @@ module.exports = [
     user_password: "33333",
   },
 ];
+export default users;

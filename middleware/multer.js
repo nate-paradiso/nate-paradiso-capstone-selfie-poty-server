@@ -5,7 +5,7 @@ export const storage = multer.diskStorage({
   destination: (req, file, callBack) => {
     callBack(null, "public/images");
   },
-  filename: (req, file, db) => {
+  filename: (req, file, callBack) => {
     callBack(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname));
   },
 });

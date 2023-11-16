@@ -22,7 +22,7 @@ const add = async (req, res) => {
     const result = await knex("users").insert(req.body);
 
     const newUserId = result[0];
-    const createdUser = await knex("users").where({ id: newUserId });
+    const createdUser = await knex("users").where({ id: newUserId }).first();
 
     res.status(201).json(createdUser);
   } catch (error) {
@@ -107,26 +107,27 @@ const getUserIdImages = async (req, res) => {
 };
 
 const postUserIdImages = async (req, res) => {
-  // const user_id = req.body.user_id;
-  // const title = req.body.title;
-  // const category = req.body.category;
-  const filename = req.body.filename;
+  const user_id = parseInt(req.params.id);
+  const title = req.body.title;
+  const category = req.body.category;
+  const image = req.file.filename;
 
-  // const likes = req.body.likes;
-
-  if (!filename === 0) {
-    return res.status(400).json({ message: "image upload failed" });
+  if (!user_id && !image && !title && !category === 0) {
+    return res.status(400).json({ message: "Invalid user_id" });
   }
+
   try {
     const newImageId = await knex("images").insert([
       {
-        // user_id: parseInt(user_id),
-        // title: title,
-        // category: category,
-        filename: filename,
+        user_id: user_id,
+        title: title,
+        category: category,
+        image: image,
       },
     ]);
-    const createdImage = await knex("images").where({ id: newImageId[0] });
+    const createdImage = await knex("images").where({ image_id: newImageId[0] }).first();
+
+    // console.log(createdImage);
 
     res.status(200).json(createdImage);
   } catch (err) {
