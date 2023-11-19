@@ -1,4 +1,5 @@
 {
-    "prettier.configPath": ".prettierrc",
-    "prettier.ignorePath": ".prettierignore"
+  "prettier.configPath": ".prettierrc",
+  "prettier.ignorePath": ".prettierignore",
+  "cSpell.words": ["fieldname", "knexfile", "knexinit"]
 }

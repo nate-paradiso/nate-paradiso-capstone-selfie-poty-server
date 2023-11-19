@@ -1,8 +1,10 @@
 import knexinit from "knex";
 import knexfile from "../knexfile.js";
 const knex = knexinit(knexfile);
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
-const index = async (_req, res) => {
+const getAll = async (_req, res) => {
   try {
     const data = await knex("users");
     res.status(200).json(data);
@@ -11,17 +13,28 @@ const index = async (_req, res) => {
   }
 };
 
-const add = async (req, res) => {
-  if (!req.body.first_name || !req.body.email || !req.body.last_name || !req.body.user_password) {
+const register = async (req, res) => {
+  const { first_name, last_name, email, user_password } = req.body;
+
+  if (!first_name || !email || !last_name || !user_password) {
     return res.status(400).json({
       message: "Please provide first name, last name, email, and password.",
     });
   }
 
   try {
-    const result = await knex("users").insert(req.body);
+    const hashedPassword = await bcrypt.hash(user_password, 10);
 
-    const newUserId = result[0];
+    const newUser = {
+      first_name,
+      last_name,
+      email,
+      user_password: hashedPassword,
+    };
+
+    const insertedIds = await knex("users").insert(newUser);
+    const newUserId = insertedIds[0];
+
     const createdUser = await knex("users").where({ id: newUserId }).first();
 
     res.status(201).json(createdUser);
@@ -29,6 +42,47 @@ const add = async (req, res) => {
     res.status(500).json({
       message: `Unable to create new user: ${error}`,
     });
+  }
+};
+
+const login = async (req, res) => {
+  const { email, user_password } = req.body;
+
+  if (!email || !user_password) {
+    return res.status(400).send("Please enter the required fields");
+  }
+
+  const user = await knex("users").where({ email: email }).first();
+  if (!user) {
+    return res.status(400).send("Invalid email");
+  }
+  const isPasswordCorrect = bcrypt.compareSync(user_password, user.user_password);
+  if (!isPasswordCorrect) {
+    return res.status(400).send("Invalid password");
+  }
+  const token = jwt.sign({ id: "user.id", email: user.email }, process.env.JWT_KEY, {
+    expiresIn: "24h",
+  });
+  res.json({ token });
+};
+
+const currentUser = async (req, res) => {
+  if (!req.headers.authorization) {
+    return res.status(401).send("Please login");
+  }
+  const authHeader = req.headers.authorization;
+  const authToken = authHeader.split(" ")[1];
+
+  try {
+    const decoded = jwt.verify(authToken, process.env.JWT_KEY);
+
+    // Respond with the appropriate user data
+    const userFound = await knex("users").where({ email: decoded.email }).first();
+
+    delete userFound.password;
+    res.json(userFound);
+  } catch (error) {
+    return res.status(401).send("Invalid auth token");
   }
 };
 
@@ -135,4 +189,14 @@ const postUserIdImages = async (req, res) => {
     res.status(400).send("Error posting image");
   }
 };
-export { index, getUserId, add, update, remove, getUserIdImages, postUserIdImages };
+export {
+  getAll,
+  getUserId,
+  register,
+  login,
+  currentUser,
+  update,
+  remove,
+  getUserIdImages,
+  postUserIdImages,
+};

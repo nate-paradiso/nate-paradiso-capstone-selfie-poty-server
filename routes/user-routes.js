@@ -1,9 +1,11 @@
 import { Router } from "express";
 const router = Router();
 import {
-  index,
+  getAll,
   getUserId,
-  add,
+  register,
+  login,
+  currentUser,
   update,
   remove,
   getUserIdImages,
@@ -12,7 +14,11 @@ import {
 
 import { uploadMulter } from "../middleware/multer.js";
 
-router.route("/").get(index).post(add);
+router.route("/").get(getAll);
+router.route("/register").post(register);
+router.route("/login").post(login);
+router.route("/current").get(currentUser);
+
 router.route("/:id").get(getUserId).patch(update).delete(remove);
 
 router.route("/:id/images").get(getUserIdImages);
