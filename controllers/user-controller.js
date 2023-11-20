@@ -76,7 +76,6 @@ const currentUser = async (req, res) => {
   try {
     const decoded = jwt.verify(authToken, process.env.JWT_KEY);
 
-    // Respond with the appropriate user data
     const userFound = await knex("users").where({ email: decoded.email }).first();
 
     delete userFound.password;
@@ -86,70 +85,71 @@ const currentUser = async (req, res) => {
   }
 };
 
-const getUserId = async (req, res) => {
-  try {
-    const usersFound = await knex("users").where({ id: req.params.id });
+// const getUserId = async (req, res) => {
+//   try {
+//     const usersFound = await knex("users").where({ id: req.params.id });
 
-    if (usersFound.length === 0) {
-      return res.status(404).json({
-        message: `User with ID ${req.params.id} not found`,
-      });
-    }
+//     if (usersFound.length === 0) {
+//       return res.status(404).json({
+//         message: `User with ID ${req.params.id} not found`,
+//       });
+//     }
 
-    const userData = usersFound[0];
-    res.json(userData);
-  } catch (error) {
-    res.status(500).json({
-      message: `Unable to retrieve user data for user with ID ${req.params.id}`,
-    });
-  }
-};
+//     const userData = usersFound[0];
+//     res.json(userData);
+//   } catch (error) {
+//     res.status(500).json({
+//       message: `Unable to retrieve user data for user with ID ${req.params.id}`,
+//     });
+//   }
+// };
 
-const update = async (req, res) => {
-  try {
-    const rowsUpdated = await knex("users").where({ id: req.params.id }).update(req.body);
+// const update = async (req, res) => {
+//   try {
+//     const rowsUpdated = await knex("users").where({ id: req.params.id }).update(req.body);
 
-    if (rowsUpdated === 0) {
-      return res.status(404).json({
-        message: `User with ID ${req.params.id} not found`,
-      });
-    }
+//     if (rowsUpdated === 0) {
+//       return res.status(404).json({
+//         message: `User with ID ${req.params.id} not found`,
+//       });
+//     }
 
-    const updatedUser = await knex("users").where({
-      id: req.params.id,
-    });
+//     const updatedUser = await knex("users").where({
+//       id: req.params.id,
+//     });
 
-    res.json(updatedUser[0]);
-  } catch (error) {
-    res.status(500).json({
-      message: `Unable to update user with ID ${req.params.id}: ${error}`,
-    });
-  }
-};
+//     res.json(updatedUser[0]);
+//   } catch (error) {
+//     res.status(500).json({
+//       message: `Unable to update user with ID ${req.params.id}: ${error}`,
+//     });
+//   }
+// };
 
-const remove = async (req, res) => {
-  try {
-    const rowsDeleted = await knex("users").where({ id: req.params.id }).delete();
+// const remove = async (req, res) => {
+//   try {
+//     const rowsDeleted = await knex("users").where({ id: req.params.id }).delete();
 
-    if (rowsDeleted === 0) {
-      return res.status(404).json({ message: `User with ID ${req.params.id} not found` });
-    }
+//     if (rowsDeleted === 0) {
+//       return res.status(404).json({ message: `User with ID ${req.params.id} not found` });
+//     }
 
-    // No Content response
-    res.sendStatus(204);
-  } catch (error) {
-    res.status(500).json({
-      message: `Unable to delete user: ${error}`,
-    });
-  }
-};
+//     // No Content response
+//     res.sendStatus(204);
+//   } catch (error) {
+//     res.status(500).json({
+//       message: `Unable to delete user: ${error}`,
+//     });
+//   }
+// };
 
 const getUserIdImages = async (req, res) => {
+  const { id } = req.params;
   try {
     const data = await knex("users")
       .join("images", "images.user_id", "users.id")
-      .where({ user_id: req.params.id })
-      .select("title", "category", "filename");
+      .where({ user_id: id })
+      .select("title", "category", "image");
     if (data.length === 0) {
       return res.status(404).json({ message: "No images uploaded" });
     }
@@ -161,24 +161,22 @@ const getUserIdImages = async (req, res) => {
 };
 
 const postUserIdImages = async (req, res) => {
-  const user_id = parseInt(req.params.id);
-  const title = req.body.title;
-  const category = req.body.category;
-  const image = req.file.filename;
-
-  if (!user_id && !image && !title && !category === 0) {
-    return res.status(400).json({ message: "Invalid user_id" });
-  }
-
   try {
-    const newImageId = await knex("images").insert([
-      {
-        user_id: user_id,
-        title: title,
-        category: category,
-        image: image,
-      },
-    ]);
+    const user_id = parseInt(req.params.id);
+    const title = req.body.title;
+    const category = req.body.category;
+    const image = req.file.filename;
+
+    if (!user_id || !image || !title || !category) {
+      return res.status(400).json({ message: "Invalid parameters" });
+    }
+
+    const newImageId = await knex("images").insert({
+      user_id: user_id,
+      title: title,
+      category: category,
+      image: image,
+    });
     const createdImage = await knex("images").where({ image_id: newImageId[0] }).first();
 
     // console.log(createdImage);
@@ -191,12 +189,12 @@ const postUserIdImages = async (req, res) => {
 };
 export {
   getAll,
-  getUserId,
+  // getUserId,
   register,
   login,
   currentUser,
-  update,
-  remove,
+  // update,
+  // remove,
   getUserIdImages,
   postUserIdImages,
 };

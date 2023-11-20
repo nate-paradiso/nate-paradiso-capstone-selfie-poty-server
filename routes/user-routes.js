@@ -2,12 +2,12 @@ import { Router } from "express";
 const router = Router();
 import {
   getAll,
-  getUserId,
+  // getUserId,
   register,
   login,
   currentUser,
-  update,
-  remove,
+  // update,
+  // remove,
   getUserIdImages,
   postUserIdImages,
 } from "../controllers/user-controller.js";
@@ -19,9 +19,9 @@ router.route("/register").post(register);
 router.route("/login").post(login);
 router.route("/current").get(currentUser);
 
-router.route("/:id").get(getUserId).patch(update).delete(remove);
+// router.route("/:id").get(getUserId).patch(update).delete(remove);
 
-router.route("/:id/images").get(getUserIdImages);
-router.route("/:id/images/upload").post(uploadMulter.single("image"), postUserIdImages);
+router.route("/current/:id/images").get(getUserIdImages);
+router.route("/current/:id/upload").post(uploadMulter.single("image"), postUserIdImages);
 
 export default router;
