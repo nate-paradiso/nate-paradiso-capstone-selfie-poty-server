@@ -179,8 +179,6 @@ const postUserIdImages = async (req, res) => {
     });
     const createdImage = await knex("images").where({ image_id: newImageId[0] }).first();
 
-    // console.log(createdImage);
-
     res.status(200).json(createdImage);
   } catch (err) {
     console.error(err);

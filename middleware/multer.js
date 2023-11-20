@@ -9,10 +9,8 @@ export const storage = multer.diskStorage({
     callBack(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname));
   },
 });
-const maxSizeBytes = 5000000;
 export const uploadMulter = multer({
   storage: storage,
-  limits: { fieldSize: maxSizeBytes },
 });
 
 // const fileFilterMiddleware = (req, file, cb) => {
