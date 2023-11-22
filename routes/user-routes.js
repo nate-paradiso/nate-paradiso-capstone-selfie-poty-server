@@ -1,11 +1,28 @@
-const router = require("express").Router();
-const userController = require("../controllers/user-controller");
+import { Router } from "express";
 
-router.route("/").get(userController.index).post(userController.add);
-router
-  .route("/:id")
-  .get(userController.getUserId)
-  .patch(userController.update)
-  .delete(userController.remove);
+const router = Router();
+import {
+  getAll,
+  // getUserId,
+  register,
+  login,
+  currentUser,
+  // update,
+  // remove,
+  getUserIdImages,
+  postUserIdImages,
+} from "../controllers/user-controller.js";
 
-module.exports = router;
+import { multerUploads } from "../middleware/multer.js";
+
+router.route("/").get(getAll);
+router.route("/register").post(register);
+router.route("/login").post(login);
+router.route("/current").get(currentUser);
+
+// router.route("/:id").get(getUserId).patch(update).delete(remove);
+
+router.route("/current/:id/images").get(getUserIdImages);
+router.route("/current/:id/upload").post(multerUploads, postUserIdImages);
+
+export default router;
