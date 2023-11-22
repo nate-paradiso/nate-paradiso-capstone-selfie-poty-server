@@ -3,6 +3,8 @@ import knexfile from "../knexfile.js";
 const knex = knexinit(knexfile);
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { dataUri } from "../middleware/multer.js";
+import { uploader } from "../config/cloudinaryConfig.js";
 
 const getAll = async (_req, res) => {
   try {
@@ -165,21 +167,29 @@ const postUserIdImages = async (req, res) => {
     const user_id = parseInt(req.params.id);
     const title = req.body.title;
     const category = req.body.category;
-    const image = req.file.filename;
+    const image = req.file;
 
     if (!user_id || !image || !title || !category) {
-      return res.status(400).json({ message: "Invalid parameters" });
+      return res.status(400).json({ message: "Invalid fields" });
     }
+    try {
+      if (req.file) {
+        const file = dataUri(req);
+        const result = await uploader.upload(file);
+        const urlImage = result.url;
 
-    const newImageId = await knex("images").insert({
-      user_id: user_id,
-      title: title,
-      category: category,
-      image: image,
-    });
-    const createdImage = await knex("images").where({ image_id: newImageId[0] }).first();
-
-    res.status(200).json(createdImage);
+        const newImageId = await knex("images").insert({
+          user_id: user_id,
+          title: title,
+          category: category,
+          image: urlImage,
+        });
+        const createdImage = await knex("images").where({ image_id: newImageId[0] }).first();
+        res.status(200).json(createdImage);
+      }
+    } catch (err) {
+      return res.status(400).json("Something went wrong while processing your request");
+    }
   } catch (err) {
     console.error(err);
     res.status(400).send("Error posting image");

@@ -1,4 +1,5 @@
 import { Router } from "express";
+
 const router = Router();
 import {
   getAll,
@@ -12,7 +13,7 @@ import {
   postUserIdImages,
 } from "../controllers/user-controller.js";
 
-import { uploadMulter } from "../middleware/multer.js";
+import { multerUploads } from "../middleware/multer.js";
 
 router.route("/").get(getAll);
 router.route("/register").post(register);
@@ -22,6 +23,6 @@ router.route("/current").get(currentUser);
 // router.route("/:id").get(getUserId).patch(update).delete(remove);
 
 router.route("/current/:id/images").get(getUserIdImages);
-router.route("/current/:id/upload").post(uploadMulter.single("image"), postUserIdImages);
+router.route("/current/:id/upload").post(multerUploads, postUserIdImages);
 
 export default router;
