@@ -5,7 +5,7 @@ const images = [
     image: "https://res.cloudinary.com/dncmazfp0/image/upload/v1700679541/ytum5s1gxhwkvdwy4dua.jpg",
     category: "Underwater",
     likes: 5,
-    user_id: 14,
+    user_id: 1,
   },
   {
     image_id: 2,
@@ -14,7 +14,7 @@ const images = [
       "https://res.cloudinary.com/dncmazfp0/image/upload/v1700696197/vdwvogsdrlh30gwmw5vq.webp",
     category: "Phone Selfie",
     likes: 5,
-    user_id: 14,
+    user_id: 1,
   },
   {
     image_id: 3,
@@ -22,7 +22,7 @@ const images = [
     image: "https://res.cloudinary.com/dncmazfp0/image/upload/v1700630284/trizzsukj5rrf4114ehp.jpg",
     category: "AI Selfie",
     likes: 5,
-    user_id: 14,
+    user_id: 1,
   },
   {
     image_id: 4,
@@ -30,7 +30,7 @@ const images = [
     image: "https://res.cloudinary.com/dncmazfp0/image/upload/v1700696259/zeeal7r4xmzm9bxxmd71.jpg",
     category: "Self Portrait",
     likes: 5,
-    user_id: 14,
+    user_id: 1,
   },
 ];
 export default images;
