@@ -176,8 +176,11 @@ const postUserIdImages = async (req, res) => {
     try {
       if (req.file) {
         const file = dataUri(req);
+        console.log("file", file);
         const result = await uploader.upload(file);
+        console.log("result", result);
         const urlImage = result.url;
+        console.log("urlImage", urlImage);
 
         const newImageId = await knex("images").insert({
           user_id: user_id,
@@ -185,7 +188,9 @@ const postUserIdImages = async (req, res) => {
           category: category,
           image: urlImage,
         });
+        console.log("newImageId", newImageId);
         const createdImage = await knex("images").where({ image_id: newImageId[0] }).first();
+        console.log("createdImage", createdImage);
         res.status(200).json(createdImage);
       }
     } catch (err) {
