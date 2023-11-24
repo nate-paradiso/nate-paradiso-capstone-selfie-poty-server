@@ -20,8 +20,8 @@ import homeRoutes from "./routes/home-routes.js";
 
 import userRoutes from "./routes/user-routes.js";
 
-app.use("", homeRoutes);
-app.use("users", userRoutes);
+app.use("/", homeRoutes);
+app.use("/users", userRoutes);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
