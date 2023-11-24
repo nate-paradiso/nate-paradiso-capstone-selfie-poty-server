@@ -5,7 +5,13 @@ import "dotenv/config";
 import { cloudinaryConfig } from "./config/cloudinaryConfig.js";
 
 const app = express();
-app.use(cors({ origin: process.env.FRONTEND_URL }));
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
 app.use(express.static("./public"));
 app.use(express.json());
 app.use("*", cloudinaryConfig);
