@@ -183,39 +183,39 @@ const postUserIdImages = async (req, res) => {
       return res.status(400).json({ message: "Invalid fields" });
     }
 
-    if (req.file) {
-      try {
-        const result = await cloudinary.uploader.upload(req.file.path);
-        const urlImage = result.url;
+    if (image) {
+      // try {
+      // const result = await cloudinary.uploader.upload(image);
+      const urlImage = image.url;
 
-        console.log("Image uploaded to Cloudinary:", { urlImage });
+      // console.log("Image uploaded to Cloudinary:", { urlImage });
+
+      try {
+        const newImageId = await knex("images").insert({
+          user_id: user_id,
+          title: title,
+          category: category,
+          image: urlImage,
+        });
+
+        console.log("Image inserted into the database with ID:", newImageId[0]);
 
         try {
-          const newImageId = await knex("images").insert({
-            user_id: user_id,
-            title: title,
-            category: category,
-            image: urlImage,
-          });
-
-          console.log("Image inserted into the database with ID:", newImageId[0]);
-
-          try {
-            const createdImage = await knex("images").where({ image_id: newImageId[0] }).first();
-            console.log("Retrieved inserted image data:", createdImage);
-            res.status(200).json(createdImage);
-          } catch (retrieveError) {
-            console.error("Error retrieving inserted image data:", retrieveError);
-            return res.status(400).json({ message: "Error retrieving inserted image data" });
-          }
-        } catch (dbInsertError) {
-          console.error("Error inserting image into the database:", dbInsertError);
-          return res.status(400).json({ message: "Error inserting image into the database" });
+          const createdImage = await knex("images").where({ image_id: newImageId[0] }).first();
+          console.log("Retrieved inserted image data:", createdImage);
+          res.status(200).json(createdImage);
+        } catch (retrieveError) {
+          console.error("Error retrieving inserted image data:", retrieveError);
+          return res.status(400).json({ message: "Error retrieving inserted image data" });
         }
-      } catch (uploadError) {
-        console.error("Error uploading image to Cloudinary:", uploadError);
-        return res.status(400).json({ message: "Error uploading image to Cloudinary" });
+      } catch (dbInsertError) {
+        console.error("Error inserting image into the database:", dbInsertError);
+        return res.status(400).json({ message: "Error inserting image into the database" });
       }
+      // } catch (uploadError) {
+      //   console.error("Error uploading image to Cloudinary:", uploadError);
+      //   return res.status(400).json({ message: "Error uploading image to Cloudinary" });
+      // }
     }
   } catch (err) {
     console.error("Error extracting data from req.body and req.file:", err);
