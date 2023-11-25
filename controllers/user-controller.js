@@ -171,13 +171,24 @@ const postUserIdImages = async (req, res) => {
     const category = req.body.category;
     const image = req.file;
 
+    console.log("Received request to upload image:", {
+      user_id,
+      title,
+      category,
+      image: image ? image.originalname : null,
+    });
+
     if (!user_id || !image || !title || !category) {
+      console.error("Invalid fields:", { user_id, title, category, image });
       return res.status(400).json({ message: "Invalid fields" });
     }
+
     if (req.file) {
       try {
         const result = await cloudinary.uploader.upload(req.file.path);
         const urlImage = result.url;
+
+        console.log("Image uploaded to Cloudinary:", { urlImage });
 
         try {
           const newImageId = await knex("images").insert({
@@ -187,24 +198,27 @@ const postUserIdImages = async (req, res) => {
             image: urlImage,
           });
 
+          console.log("Image inserted into the database with ID:", newImageId[0]);
+
           try {
             const createdImage = await knex("images").where({ image_id: newImageId[0] }).first();
+            console.log("Retrieved inserted image data:", createdImage);
             res.status(200).json(createdImage);
           } catch (retrieveError) {
-            console.error(retrieveError);
+            console.error("Error retrieving inserted image data:", retrieveError);
             return res.status(400).json({ message: "Error retrieving inserted image data" });
           }
         } catch (dbInsertError) {
-          console.error(dbInsertError);
+          console.error("Error inserting image into the database:", dbInsertError);
           return res.status(400).json({ message: "Error inserting image into the database" });
         }
       } catch (uploadError) {
-        console.error(uploadError);
+        console.error("Error uploading image to Cloudinary:", uploadError);
         return res.status(400).json({ message: "Error uploading image to Cloudinary" });
       }
     }
   } catch (err) {
-    console.error(err);
+    console.error("Error extracting data from req.body and req.file:", err);
     res.status(400).send("Error extracting data from req.body and req.file");
   }
 };
