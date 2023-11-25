@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import "dotenv/config";
 
-import { cloudinaryConfig } from "./config/cloudinaryConfig.js";
+// import { cloudinaryConfig } from "./config/cloudinaryConfig.js";
 
 const app = express();
 app.use(
@@ -14,7 +14,7 @@ app.use(
 );
 app.use(express.static("./public"));
 app.use(express.json());
-app.use("*", cloudinaryConfig);
+// app.use("*", cloudinaryConfig);
 
 import homeRoutes from "./routes/home-routes.js";
 

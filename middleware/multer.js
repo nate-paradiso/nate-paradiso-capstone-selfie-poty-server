@@ -1,17 +1,20 @@
+import { v2 as cloudinary } from "cloudinary";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
 import multer from "multer";
+import dotenv from "dotenv";
+dotenv.config();
 
-import path from "path";
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-import DatauriParser from "datauri/parser.js";
+export const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {},
+});
 
-export const storage = multer.memoryStorage();
+const multerUploads = multer({ storage: storage }).single("image");
 
-const multerUploads = multer({ storage }).single("image");
-
-const parser = new DatauriParser();
-
-const dataUri = req => {
-  console.log(req.file);
-  return parser.format(path.extname(req.file.originalname).toString(), req.file.buffer).content;
-};
-export { multerUploads, dataUri };
+export { multerUploads };
