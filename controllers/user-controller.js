@@ -26,7 +26,7 @@ const register = async (req, res) => {
   }
 
   try {
-    const hashedPassword = bcrypt.hash(user_password);
+    const hashedPassword = await bcrypt.hash(user_password, 10);
 
     const newUser = {
       first_name,
@@ -40,8 +40,10 @@ const register = async (req, res) => {
 
     const createdUser = await knex("users").where({ id: newUserId }).first();
 
-    res.status(201).json(createdUser);
-    res.send("Welcome to my API");
+    res.status(201).json({
+      user: createdUser,
+      message: "Welcome to my API",
+    });
   } catch (error) {
     res.status(500).json({
       message: `Unable to create new user: ${error}`,
