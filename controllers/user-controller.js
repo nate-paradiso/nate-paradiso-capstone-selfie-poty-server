@@ -132,22 +132,27 @@ const currentUser = async (req, res) => {
 //   }
 // };
 
-// const remove = async (req, res) => {
-//   try {
-//     const rowsDeleted = await knex("users").where({ id: req.params.id }).delete();
+const deleteUser = async (req, res) => {
+  if (!req.headers.authorization) {
+    return res.status(401).send("Please login");
+  }
+  const authHeader = req.headers.authorization;
+  const authToken = authHeader.split(" ")[1];
 
-//     if (rowsDeleted === 0) {
-//       return res.status(404).json({ message: `User with ID ${req.params.id} not found` });
-//     }
+  try {
+    const decoded = jwt.verify(authToken, process.env.JWT_KEY);
 
-//     // No Content response
-//     res.sendStatus(204);
-//   } catch (error) {
-//     res.status(500).json({
-//       message: `Unable to delete user: ${error}`,
-//     });
-//   }
-// };
+    const deletedUser = await knex("users").where({ email: decoded.email }).del();
+
+    if (deletedUser === 0) {
+      return res.status(404).send("User not found");
+    }
+
+    res.status(204).send("User deleted successfully");
+  } catch (error) {
+    return res.status(401).send("Invalid auth token");
+  }
+};
 
 const getUserIdImages = async (req, res) => {
   const { id } = req.params;
@@ -231,7 +236,7 @@ export {
   login,
   currentUser,
   // update,
-  // remove,
+  deleteUser,
   getUserIdImages,
   postUserIdImages,
 };

@@ -8,7 +8,7 @@ import {
   login,
   currentUser,
   // update,
-  // remove,
+  deleteUser,
   getUserIdImages,
   postUserIdImages,
 } from "../controllers/user-controller.js";
@@ -18,9 +18,9 @@ import { multerUploads } from "../middleware/multer.js";
 router.route("/").get(getAll);
 router.route("/register").post(register);
 router.route("/login").post(login);
-router.route("/current").get(currentUser);
+router.route("/current").get(currentUser).delete(deleteUser);
 
-// router.route("/:id").get(getUserId).patch(update).delete(remove);
+// router.route("/current/:id").delete(deleteUser);
 
 router.route("/current/:id/images").get(getUserIdImages);
 router.route("/current/:id/upload").post(multerUploads, postUserIdImages);
