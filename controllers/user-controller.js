@@ -142,7 +142,6 @@ const deleteUser = async (req, res) => {
   try {
     const decoded = jwt.verify(authToken, process.env.JWT_KEY);
 
-    // Assuming the email is the unique identifier for the user
     const deletedUser = await knex("users").where({ email: decoded.email }).del();
 
     if (deletedUser === 0) {
