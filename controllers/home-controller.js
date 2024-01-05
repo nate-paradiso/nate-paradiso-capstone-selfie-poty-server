@@ -11,4 +11,25 @@ const getAllImages = async (_req, res) => {
   }
 };
 
-export default { getAllImages };
+const updateLikes = async (req, res) => {
+  const { imageId } = req.body;
+
+  try {
+    const imageData = await knex("images").where({ image_id: imageId }).first();
+
+    if (!imageData) {
+      return res.status(404).json({ message: "Image not found" });
+    }
+
+    const currentLikes = imageData.likes || 0;
+    await knex("images")
+      .where({ image_id: imageId })
+      .update({ likes: currentLikes + 1 });
+
+    res.status(200).json({ message: "Like updated successfully" });
+  } catch (err) {
+    res.status(400).send(`Error updating like: ${err}`);
+  }
+};
+
+export { getAllImages, updateLikes };
