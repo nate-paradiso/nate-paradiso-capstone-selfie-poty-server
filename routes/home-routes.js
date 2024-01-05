@@ -1,7 +1,8 @@
 import { Router } from "express";
 const router = Router();
-import homeController from "../controllers/home-controller.js";
+import { getAllImages, updateLikes } from "../controllers/home-controller.js";
 
-router.route("").get(homeController.getAllImages);
+router.route("").get(getAllImages);
+router.route("/likes").patch(updateLikes);
 
 export default router;
